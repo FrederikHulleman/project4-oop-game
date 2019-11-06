@@ -84,6 +84,8 @@ class Phrase
 
     //thanks to https://www.php.net/manual/en/function.ctype-alpha.php
     if(strlen($character) == 1 && ctype_alpha($character)) {
+      //make sure the character is stored in the selected array, to keep track of all selected characters and disable those keys
+      $this->setSelected($character);
       if(strpos($this->getCurrentPhrase(), $character) !== FALSE)  {
         return true;
       }
@@ -130,7 +132,7 @@ class Phrase
                 );
 
     //thanks to https://www.php.net/manual/en/function.ctype-alpha.php
-    if(strlen($character) == 1 && ctype_alpha($character)) {
+    if(!in_array($character,$this->getSelected()) && strlen($character) == 1 && ctype_alpha($character)) {
       $this->selected[] = $character;
     }
   }

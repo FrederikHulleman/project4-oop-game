@@ -26,8 +26,8 @@ class Game
   */
   public function checkForWin()
   {
-
     //thanks to https://www.php.net/manual/en/function.array-filter.php
+    //create an array with previous selected characters which were correct. Each character from the selected array from the phrase, is validated by using the checkLetter method of the phrase
     $selected_correct_characters = array_filter(
                                       $this->phrase->getSelected(),
                                       array($this->phrase,'checkLetter')
@@ -35,34 +35,56 @@ class Game
     sort($selected_correct_characters);
 
     //thanks to https://www.php.net/manual/en/function.count-chars.php
-    $all_characters = str_split(
+    //create an array with all allowable unique characters in the phrase
+    //count_chars gives a string with all unique characters in the phrase
+    //str_split creates an array with all unique characters
+    $all_correct_characters = str_split(
                           count_chars(
                             str_replace(' ','',$this->phrase->getCurrentPhrase())
                           ,3)
                         );
-    sort($all_characters);
+    sort($all_correct_characters);
 
     //thanks to https://www.php.net/manual/en/function.array-diff.php
-    $diff = array_diff($all_characters,$selected_correct_characters);
+    //compare all unique characters in the phrase with all correctly selected characters.
+    //$diff is the array with the values which are in the 1st array, but not in the 2nd array. So these are the remaining correct characters the user still has to select.
+    $diff = array_diff($all_correct_characters,$selected_correct_characters);
 
-    // echo "<b>All characters:";
-    // var_dump($all_characters);
-    // echo "<BR><b>Selected correct characters:";
-    // var_dump($selected_correct_characters);
-    // echo "<BR>All selected characters:";
-    // var_dump($this->phrase->getSelected());
-    // echo "<BR>Difference:";
-    // var_dump($diff);
-
-    if(count($diff) == 0) {
-      return TRUE;
+    if(empty($diff) && is_array($diff)) {
+      return "WIN";
     }
-    return FALSE;
+    return "NOT WIN";
   }
 
   /*
   - checkForLose(): this method checks to see if the player has guessed too many wrong letters.
   */
+
+  public function checkForLose()
+  {
+    $diff = array();
+    //thanks to https://www.php.net/manual/en/function.count-chars.php
+    //create an array with all allowable unique characters in the phrase
+    //count_chars gives a string with all unique characters in the phrase
+    //str_split creates an array with all unique characters
+    $all_correct_characters = str_split(
+                          count_chars(
+                            str_replace(' ','',$this->phrase->getCurrentPhrase())
+                          ,3)
+                        );
+    sort($all_correct_characters);
+
+    //thanks to https://www.php.net/manual/en/function.array-diff.php
+    //compare all unique characters in the phrase with all correctly selected characters.
+    //$diff is the array with the values which are in the 1st array, but not in the 2nd array. So these are the remaining correct characters the user still has to select.
+
+    $diff = array_diff($this->phrase->getSelected(),$all_correct_characters);
+    
+    if(is_array($diff) && count($diff) >= 5) {
+      return "LOSE";
+    }
+    return "NOT LOSE";
+  }
 
   /*
   - gameOver(): this method displays one message if the player wins and another message if they lose. It returns false if the game has not been won or lost.

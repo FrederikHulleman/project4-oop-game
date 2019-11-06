@@ -21,30 +21,35 @@ $game = new Game($phrase);
 // echo $phrase->getCurrentPhrase() . PHP_EOL;
 // $phrase->setCurrentPhrase("  echt wel  ");
 // echo $phrase->getCurrentPhrase() . PHP_EOL;
-//
-$phrase->setSelected(' A ');
-$phrase->setSelected(' B ');
-$phrase->setSelected(' E ');
-$phrase->setSelected(' o ');
-$phrase->setSelected(' i ');
-$phrase->setSelected('1');
-$phrase->setSelected('zzz');
-$phrase->setSelected('z0');
-$phrase->setSelected(' k ');
-$phrase->setSelected('n');
-$phrase->setSelected('d');
-$phrase->setSelected('t');
-// var_dump($phrase->getSelected()) . "<br>";
-//
-// echo "<br>" . $phrase->checkLetter('i') . " - i<br>";
-// echo "<br>" . $phrase->checkLetter('z') . " - z<br>";
-// echo "<br>" . $phrase->checkLetter('e1') . " - e1<br>";
-if($game->checkForWin()) {
-  echo "Congratulations";
-}
-else {
-  echo "bummer";
-}
+
+//CORRECT:
+
+$phrase->checkLetter(' B ');
+$phrase->checkLetter(' k ');
+$phrase->checkLetter('n');
+$phrase->checkLetter('d');
+$phrase->checkLetter('t');
+$phrase->checkLetter(' E ');
+$phrase->checkLetter(' o ');
+$phrase->checkLetter(' i ');
+
+//INCORRECT
+$phrase->checkLetter(' A ');
+$phrase->checkLetter('z');
+$phrase->checkLetter('c');
+$phrase->checkLetter('x');
+// $phrase->checkLetter('y');
+// $phrase->checkLetter('m');
+//var_dump($phrase->getSelected());
+
+echo $game->checkForWin();
+echo $game->checkForLose();
+// if($game->checkForWin()) {
+//   echo "Congratulations";
+// }
+// else {
+//   echo "bummer";
+// }
 ?>
 
 <!DOCTYPE html>
