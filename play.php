@@ -15,9 +15,22 @@ In the body of the page you should play the game. To play the game:
 
 require 'src/config.php';
 
-$phrase = new Phrase();
+$phrase = new Phrase("   Ik Ben Een Idioot   ");
 $game = new Game();
 
+echo $phrase->getCurrentPhrase() . PHP_EOL;
+// $phrase->setCurrentPhrase("  echt wel  ");
+// echo $phrase->getCurrentPhrase() . PHP_EOL;
+
+var_dump($phrase->getSelected()) . PHP_EOL;
+$phrase->setSelected(' A ');
+var_dump($phrase->getSelected()) . PHP_EOL;
+$phrase->setSelected(' B ');
+var_dump($phrase->getSelected()) . PHP_EOL;
+$phrase->setSelected(' E ');
+var_dump($phrase->getSelected()) . PHP_EOL;
+$phrase->setSelected(' o ');
+var_dump($phrase->getSelected()) . PHP_EOL;
 ?>
 
 <!DOCTYPE html>
@@ -35,6 +48,7 @@ $game = new Game();
 <div class="main-container">
     <div id="banner" class="section">
         <h2 class="header">Phrase Hunter</h2>
+        <?php echo $phrase->addPhraseToDisplay(); ?>
     </div>
 </div>
 
