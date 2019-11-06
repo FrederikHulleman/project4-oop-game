@@ -15,22 +15,26 @@ In the body of the page you should play the game. To play the game:
 
 require 'src/config.php';
 
-$phrase = new Phrase("   Ik Ben Een Idioot   ");
+$phrase = new Phrase("  223 Ik Ben Een Idioot !!!!  ");
 $game = new Game();
 
-echo $phrase->getCurrentPhrase() . PHP_EOL;
+// echo $phrase->getCurrentPhrase() . PHP_EOL;
 // $phrase->setCurrentPhrase("  echt wel  ");
 // echo $phrase->getCurrentPhrase() . PHP_EOL;
 
-var_dump($phrase->getSelected()) . PHP_EOL;
 $phrase->setSelected(' A ');
-var_dump($phrase->getSelected()) . PHP_EOL;
 $phrase->setSelected(' B ');
-var_dump($phrase->getSelected()) . PHP_EOL;
 $phrase->setSelected(' E ');
-var_dump($phrase->getSelected()) . PHP_EOL;
 $phrase->setSelected(' o ');
-var_dump($phrase->getSelected()) . PHP_EOL;
+$phrase->setSelected(' i ');
+$phrase->setSelected('1');
+$phrase->setSelected('zzz');
+$phrase->setSelected('z0');
+var_dump($phrase->getSelected()) . "<br>";
+
+echo "<br>" . $phrase->checkLetter('i') . " - i<br>";
+echo "<br>" . $phrase->checkLetter('z') . " - z<br>";
+echo "<br>" . $phrase->checkLetter('e1') . " - e1<br>";
 ?>
 
 <!DOCTYPE html>

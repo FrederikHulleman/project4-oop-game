@@ -47,7 +47,6 @@ class Phrase
     foreach ($characters as $character)
     {
       $display_phrase .= '<li class="';
-      //https://www.php.net/manual/en/function.ctype-alpha.php
 
       if($character == " ") {
         $display_phrase .= 'hide space"> ';
@@ -62,38 +61,34 @@ class Phrase
       $display_phrase .= '</li>' . PHP_EOL;
 
     }
-
     $display_phrase .= '</ul>' . PHP_EOL;
     $display_phrase .= '</div>' . PHP_EOL;
 
-
     return $display_phrase;
-
-
-    /*
-    <div id="phrase" class="section">
-        <ul>
-            <li class="hide letter h">h</li>
-            <li class="hide letter o">o</li>
-            <li class="hide letter w">w</li>
-            <li class="hide space"> </li>
-            <li class="hide letter a">a</li>
-            <li class="hide letter r">r</li>
-            <li class="hide letter e">e</li>
-            <li class="hide space"> </li>
-            <li class="hide letter y">y</li>
-            <li class="hide letter o">o</li>
-            <li class="hide letter u">u</li>
-        </ul>
-    </div>
-    */
   }
 
   /*
     checkLetter(): checks to see if a letter matches a letter in the phrase. Accepts a single letter to check against the phrase. Returns true or false.
   */
-  public function checkLetter()
+  public function checkLetter($value)
   {
+    //thanks to https://stackoverflow.com/questions/659025/how-to-remove-non-alphanumeric-characters
+    //make lower case, remove whitespace before and after, and remove non alphabetic characters
+    $character = strtolower(
+                  trim(
+                    preg_replace("/[^A-Za-z ]/",'',
+                      filter_var($value, FILTER_SANITIZE_STRING)
+                    )
+                  )
+                );
+
+    //thanks to https://www.php.net/manual/en/function.ctype-alpha.php
+    if(strlen($character) == 1 && ctype_alpha($character)) {
+      if(strpos($this->getCurrentPhrase(), $character) !== FALSE)  {
+        return true;
+      }
+    }
+    return false;
 
   }
 
@@ -107,13 +102,14 @@ class Phrase
 
   {
     //thanks to https://stackoverflow.com/questions/659025/how-to-remove-non-alphanumeric-characters
-    $this->currentPhrase = preg_replace("/[^A-Za-z ]/",'',
-                              strtolower(
-                                trim(
+    //make lower case, remove whitespace before and after, and remove non alphabetic characters
+    $this->currentPhrase = strtolower(
+                              trim(
+                                preg_replace("/[^A-Za-z ]/",'',
                                   filter_var($value, FILTER_SANITIZE_STRING)
-                                  )
                                 )
-                              );
+                              )
+                            );
   }
 
   public function getSelected()
@@ -123,7 +119,22 @@ class Phrase
 
   public function setSelected($value)
   {
-    $this->selected[] = strtolower(trim(filter_var($value, FILTER_SANITIZE_STRING)));
+    //thanks to https://stackoverflow.com/questions/659025/how-to-remove-non-alphanumeric-characters
+    //make lower case, remove whitespace before and after, and remove non alphabetic characters
+    $character = strtolower(
+                  trim(
+                    preg_replace("/[^A-Za-z ]/",'',
+                      filter_var($value, FILTER_SANITIZE_STRING)
+                    )
+                  )
+                );
+
+    //thanks to https://www.php.net/manual/en/function.ctype-alpha.php
+    if(strlen($character) == 1 && ctype_alpha($character)) {
+      $this->selected[] = $character;
+    }
+
+
   }
 
 }
