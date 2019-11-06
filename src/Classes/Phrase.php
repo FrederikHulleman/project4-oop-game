@@ -133,8 +133,6 @@ class Phrase
     if(strlen($character) == 1 && ctype_alpha($character)) {
       $this->selected[] = $character;
     }
-
-
   }
 
 }

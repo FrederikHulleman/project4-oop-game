@@ -16,12 +16,12 @@ In the body of the page you should play the game. To play the game:
 require 'src/config.php';
 
 $phrase = new Phrase("  223 Ik Ben Een Idioot !!!!  ");
-$game = new Game();
+$game = new Game($phrase);
 
 // echo $phrase->getCurrentPhrase() . PHP_EOL;
 // $phrase->setCurrentPhrase("  echt wel  ");
 // echo $phrase->getCurrentPhrase() . PHP_EOL;
-
+//
 $phrase->setSelected(' A ');
 $phrase->setSelected(' B ');
 $phrase->setSelected(' E ');
@@ -30,11 +30,21 @@ $phrase->setSelected(' i ');
 $phrase->setSelected('1');
 $phrase->setSelected('zzz');
 $phrase->setSelected('z0');
-var_dump($phrase->getSelected()) . "<br>";
-
-echo "<br>" . $phrase->checkLetter('i') . " - i<br>";
-echo "<br>" . $phrase->checkLetter('z') . " - z<br>";
-echo "<br>" . $phrase->checkLetter('e1') . " - e1<br>";
+$phrase->setSelected(' k ');
+$phrase->setSelected('n');
+$phrase->setSelected('d');
+$phrase->setSelected('t');
+// var_dump($phrase->getSelected()) . "<br>";
+//
+// echo "<br>" . $phrase->checkLetter('i') . " - i<br>";
+// echo "<br>" . $phrase->checkLetter('z') . " - z<br>";
+// echo "<br>" . $phrase->checkLetter('e1') . " - e1<br>";
+if($game->checkForWin()) {
+  echo "Congratulations";
+}
+else {
+  echo "bummer";
+}
 ?>
 
 <!DOCTYPE html>
