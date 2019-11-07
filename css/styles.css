@@ -138,6 +138,18 @@ input[type=submit].correct {
   justify-content: center;
 }
 
+.correct {
+  background: #3a3f58;
+  border-radius: 5px;
+  font-size: var(--font-size-medium);
+  color: #FFFFFF;
+}
+
+.incorrect {
+  background: #f7a964;
+  color: #FFFFFF;
+}
+
 .chosen {
   background: #3a3f58;
   border-radius: 5px;

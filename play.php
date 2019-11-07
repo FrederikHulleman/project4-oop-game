@@ -13,43 +13,32 @@ In the body of the page you should play the game. To play the game:
   - If the game is still in play, display the game items: displayPhrase(), displayKeyboard(), displayScore()
 */
 
+session_start();
+$selected = array();
 require 'src/config.php';
 
-$phrase = new Phrase("  223 Ik Ben Een Idioot !!!!  ");
+if(!empty($_SESSION['selected']) && $_SERVER['REQUEST_METHOD'] == "POST") {
+  $selected = $_SESSION['selected'];
+}
+elseif(!empty($_SESSION['selected']) && $_SERVER['REQUEST_METHOD'] != "POST") {
+  session_destroy();
+  $_SESSION['selected'] = array();
+}
+
+$phrase = new Phrase("gek",$selected);
 $game = new Game($phrase);
 
-// echo $phrase->getCurrentPhrase() . PHP_EOL;
-// $phrase->setCurrentPhrase("  echt wel  ");
-// echo $phrase->getCurrentPhrase() . PHP_EOL;
+if(!empty($_POST['key'])) {
+  $key = trim(
+            strtolower(
+              filter_input(INPUT_POST,'key',FILTER_SANITIZE_STRING)
+              )
+            );
+  $phrase->setSelected($key);
+  $_SESSION['selected'] = $phrase->getSelected();
+}
 
-//CORRECT:
 
-$phrase->checkLetter(' B ');
-$phrase->checkLetter(' k ');
-$phrase->checkLetter('n');
-$phrase->checkLetter('d');
-$phrase->checkLetter('t');
-$phrase->checkLetter(' E ');
-$phrase->checkLetter(' o ');
-$phrase->checkLetter(' i ');
-
-//INCORRECT
-$phrase->checkLetter(' A ');
-$phrase->checkLetter('z');
-$phrase->checkLetter('c');
-$phrase->checkLetter('x');
-// $phrase->checkLetter('y');
-// $phrase->checkLetter('m');
-//var_dump($phrase->getSelected());
-
-echo $game->checkForWin();
-echo $game->checkForLose();
-// if($game->checkForWin()) {
-//   echo "Congratulations";
-// }
-// else {
-//   echo "bummer";
-// }
 ?>
 
 <!DOCTYPE html>
@@ -64,10 +53,23 @@ echo $game->checkForLose();
 </head>
 
 <body>
+
 <div class="main-container">
+
     <div id="banner" class="section">
+
         <h2 class="header">Phrase Hunter</h2>
-        <?php echo $phrase->addPhraseToDisplay(); ?>
+        <?php
+        if($game_over_message = $game->gameOver())
+        {
+          echo $game_over_message;
+        }
+        else {
+          echo $game->displayScore();
+          echo $phrase->addPhraseToDisplay();
+          echo $game->displayKeyboard();
+        }
+      ?>
     </div>
 </div>
 

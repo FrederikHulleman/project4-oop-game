@@ -25,9 +25,9 @@ class Phrase
         $this->setCurrentPhrase($phrase);
     }
 
-    if(!empty($selected))
+    if(!empty($selected) && is_array($selected))
     {
-        $this->setSelected($selected);
+        $this->selected = $selected;
     }
   }
 
@@ -84,8 +84,6 @@ class Phrase
 
     //thanks to https://www.php.net/manual/en/function.ctype-alpha.php
     if(strlen($character) == 1 && ctype_alpha($character)) {
-      //make sure the character is stored in the selected array, to keep track of all selected characters and disable those keys
-      $this->setSelected($character);
       if(strpos($this->getCurrentPhrase(), $character) !== FALSE)  {
         return true;
       }
