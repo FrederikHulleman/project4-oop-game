@@ -12,21 +12,33 @@ In the body of the page you should play the game. To play the game:
   - Use the gameOver method to check if the game has been won or lost and display appropriate messages.
   - If the game is still in play, display the game items: displayPhrase(), displayKeyboard(), displayScore()
 */
-
 session_start();
 $selected = array();
+$current_phrase = '';
+
 require 'src/config.php';
 
-if(!empty($_SESSION['selected']) && $_SERVER['REQUEST_METHOD'] == "POST") {
-  $selected = $_SESSION['selected'];
-}
-elseif(!empty($_SESSION['selected']) && $_SERVER['REQUEST_METHOD'] != "POST") {
+if($_SERVER['REQUEST_METHOD'] != "POST") {
   session_destroy();
   $_SESSION['selected'] = array();
+  $_SESSION['current_phrase'] = '';
+  session_start();
+}
+else {
+  if(!empty($_SESSION['selected'])) {
+    $selected = $_SESSION['selected'];
+  }
+  if(!empty($_SESSION['current_phrase'])) {
+    $current_phrase = $_SESSION['current_phrase'];
+  }
 }
 
-$phrase = new Phrase("gek",$selected);
-$game = new Game($phrase);
+$phrase_object = new Phrase($current_phrase,$selected);
+$game = new Game($phrase_object);
+
+if(empty($_SESSION['current_phrase'])) {
+  $_SESSION['current_phrase'] = $phrase_object->getCurrentPhrase();
+}
 
 if(!empty($_POST['key'])) {
   $key = trim(
@@ -34,8 +46,8 @@ if(!empty($_POST['key'])) {
               filter_input(INPUT_POST,'key',FILTER_SANITIZE_STRING)
               )
             );
-  $phrase->setSelected($key);
-  $_SESSION['selected'] = $phrase->getSelected();
+  $phrase_object->setSelected($key);
+  $_SESSION['selected'] = $phrase_object->getSelected();
 }
 
 
@@ -66,7 +78,7 @@ if(!empty($_POST['key'])) {
         }
         else {
           echo $game->displayScore();
-          echo $phrase->addPhraseToDisplay();
+          echo $phrase_object->addPhraseToDisplay();
           echo $game->displayKeyboard();
         }
       ?>

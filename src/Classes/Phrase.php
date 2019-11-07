@@ -12,6 +12,13 @@ class Phrase
   */
   private $currentPhrase;
   private $selected = array();
+  private $phrase_array = ['Birds of a Feather Flock Together',
+                            'On the Ropes',
+                            'Knuckle Down',
+                            'Elephant in the Room',
+                            'Between a Rock and a Hard Place',
+                            'I Smell a Rat',
+                            'Not the Sharpest Tool in the Shed'];
 
   /*
     The class must include a constructor that accepts two OPTIONAL parameters:
@@ -23,6 +30,9 @@ class Phrase
     if(!empty($phrase))
     {
         $this->setCurrentPhrase($phrase);
+    }
+    else {
+        $this->setCurrentPhrase($this->phrase_array[array_rand($this->phrase_array)]);
     }
 
     if(!empty($selected) && is_array($selected))
@@ -44,7 +54,9 @@ class Phrase
 
     //thanks to https://stackoverflow.com/questions/4601032/php-iterate-on-string-characters
     $characters = str_split($this->currentPhrase);
-    foreach ($characters as $character)
+    //start position to look for a space to add a BR
+    $next_new_line = 10;
+    foreach ($characters as $key=>$character)
     {
       $display_phrase .= '<li class="';
 
@@ -60,6 +72,10 @@ class Phrase
       }
       $display_phrase .= '</li>' . PHP_EOL;
 
+      if($character == " " && $key>= $next_new_line) {
+        $display_phrase .= '<br>' . PHP_EOL;
+        $next_new_line = $key + 10;
+      }
     }
     $display_phrase .= '</ul>' . PHP_EOL;
     $display_phrase .= '</div>' . PHP_EOL;

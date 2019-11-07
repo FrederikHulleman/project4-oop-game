@@ -20,7 +20,6 @@ class Game
   public function __construct($phrase)
   {
     $this->phrase = $phrase;
-    $this->checkForLose();
   }
 
   public function getLives()
@@ -137,7 +136,9 @@ class Game
     $keyrows[] = array('a','s','d','f','g','h','j','k','l');
     $keyrows[] = array('z','x','c','v','b','n','m');
 
-    $keyboard_string = '<form method="post" action="play.php">' . PHP_EOL;
+    $keyboard_string = '';
+    $keyboard_string .= '<p>Choose & Click your characters on this keyboard:</p>' . PHP_EOL;
+    $keyboard_string .= '<form method="post" action="play.php">' . PHP_EOL;
     $keyboard_string .= '<div id="qwerty" class="section">' . PHP_EOL;
     foreach($keyrows as $keyrow) {
       $keyboard_string .= '<div class="keyrow">' . PHP_EOL;
@@ -177,7 +178,7 @@ class Game
   {
     $score_string = '';
     $score_string .= '<div id="scoreboard" class="section">' . PHP_EOL;
-    $score_string .= '<p>Remaining lives:</p>';
+    $score_string .= '<p>Remaining lives:</p>' . PHP_EOL;
     $score_string .= '<ol>' . PHP_EOL;
 
     for ($i=1; $i <= $this->max_lives; $i++) {
@@ -195,16 +196,6 @@ class Game
 
     return $score_string;
 
-
-    /*<div id="scoreboard" class="section">
-        <ol>
-            <li class="tries"><img src="images/loseHeart.png" height="35px" widght="30px"></li>
-            <li class="tries"><img src="images/liveHeart.png" height="35px" widght="30px"></li>
-            <li class="tries"><img src="images/liveHeart.png" height="35px" widght="30px"></li>
-            <li class="tries"><img src="images/liveHeart.png" height="35px" widght="30px"></li>
-            <li class="tries"><img src="images/liveHeart.png" height="35px" widght="30px"></li>
-        </ol>
-    </div>*/
   }
 
 }
