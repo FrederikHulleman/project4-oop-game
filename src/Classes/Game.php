@@ -103,19 +103,24 @@ class Game
   */
   public function gameOver()
   {
+
+    $start_over_button = '<form method="get" action="play.php">' . PHP_EOL;
+    $start_over_button .= '<input id="btn__reset" type="submit" value="Start Over" />' . PHP_EOL;
+    $start_over_button .= '</form>' . PHP_EOL;
+
     if($this->checkForWin() && !$this->checkForLose())
     {
       return '<h1 id="game-over-message">Congratulations on guessing: "'
                 . $this->phrase->getCurrentPhrase()
-                . '"</h1>';
-
-
+                . '"</h1>' . PHP_EOL
+                . $start_over_button;
     }
     elseif($this->checkForLose() && !$this->checkForWin())
     {
       return '<h1 id="game-over-message">The phrase was: "'
                 . $this->phrase->getCurrentPhrase()
-                . '". Better luck next time!</h1>';
+                . '". Better luck next time!</h1>' . PHP_EOL
+                . $start_over_button;
     }
     else
     {
