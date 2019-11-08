@@ -18,7 +18,7 @@ $current_phrase = '';
 
 require 'src/config.php';
 
-if($_SERVER['REQUEST_METHOD'] != "POST") {
+if($_SERVER['REQUEST_METHOD'] != "POST" || empty($_POST['key'])) {
   session_destroy();
   $_SESSION['selected'] = array();
   $_SESSION['current_phrase'] = '';
@@ -62,10 +62,27 @@ if(!empty($_POST['key'])) {
     <link href="css/styles.css" rel="stylesheet">
     <link href="css/animate.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+    $(document).ready(function(){
+      document.body.addEventListener("keydown", function(event) {
+          if (event.keyCode >= 65 && event.keyCode <= 90) {
+            form = document.getElementById("key_board");
+            myvar = document.createElement('input');
+            myvar.setAttribute('name', 'key');
+            myvar.setAttribute('type', 'hidden');
+            myvar.setAttribute('value', String.fromCharCode(event.keyCode));
+            form.appendChild(myvar);
+            form.submit();
+          }
+      });
+      });
+
+      </script>
+
 </head>
 
 <body>
-
 <div class="main-container">
 
     <div id="banner" class="section">
@@ -82,6 +99,8 @@ if(!empty($_POST['key'])) {
           echo $game->displayKeyboard();
         }
       ?>
+
+
     </div>
 </div>
 

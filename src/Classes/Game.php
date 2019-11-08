@@ -104,8 +104,8 @@ class Game
   public function gameOver()
   {
 
-    $start_over_button = '<form method="get" action="play.php">' . PHP_EOL;
-    $start_over_button .= '<input id="btn__reset" type="submit" value="Start Over" />' . PHP_EOL;
+    $start_over_button = '<form method="post" action="play.php">' . PHP_EOL;
+    $start_over_button .= '<input id="btn__reset" name="start" type="submit" value="Start Over" />' . PHP_EOL;
     $start_over_button .= '</form>' . PHP_EOL;
 
     if($this->checkForWin() && !$this->checkForLose())
@@ -143,7 +143,7 @@ class Game
 
     $keyboard_string = '';
     $keyboard_string .= '<p>Choose & Click your characters on this keyboard:</p>' . PHP_EOL;
-    $keyboard_string .= '<form method="post" action="play.php">' . PHP_EOL;
+    $keyboard_string .= '<form id="key_board" method="post" action="play.php">' . PHP_EOL;
     $keyboard_string .= '<div id="qwerty" class="section">' . PHP_EOL;
     foreach($keyrows as $keyrow) {
       $keyboard_string .= '<div class="keyrow">' . PHP_EOL;
@@ -171,6 +171,8 @@ class Game
     }
     $keyboard_string .= '</div>' . PHP_EOL;
     $keyboard_string .= '</form>' . PHP_EOL;
+
+
 
     return $keyboard_string;
   }
