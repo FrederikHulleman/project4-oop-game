@@ -12,11 +12,20 @@ In the body of the page you should play the game. To play the game:
   - Use the gameOver method to check if the game has been won or lost and display appropriate messages.
   - If the game is still in play, display the game items: displayPhrase(), displayKeyboard(), displayScore()
 */
+
 session_start();
+require 'src/config.php';
 $selected = array();
 $current_phrase = '';
+$display_keyboard = '';
 
-require 'src/config.php';
+//to read the previous keyboard display setting: none or block
+if(!empty($_POST['display_keyboard'])) {
+  $display_keyboard = filter_input(INPUT_POST,'display_keyboard',FILTER_SANITIZE_STRING);
+}
+else {
+  $display_keyboard = 'none';
+}
 
 if($_SERVER['REQUEST_METHOD'] != "POST" || empty($_POST['key'])) {
   session_destroy();
@@ -50,6 +59,16 @@ if(!empty($_POST['key'])) {
   $_SESSION['selected'] = $phrase_object->getSelected();
 }
 
+$phrase_object->setPhraseAnswer(' i     smell a    rat     ');
+
+echo "phrase current: " . $phrase_object->getCurrentPhrase() . '<br>';
+echo "phrase answer: " . $phrase_object->getPhraseAnswer() . '<br>';
+
+if($phrase_object->checkPhraseAnswer()) {
+  echo "Phrase answered corectly;";
+} else {
+  echo "Phrase answered incorectly;";
+}
 
 ?>
 
@@ -63,22 +82,8 @@ if(!empty($_POST['key'])) {
     <link href="css/animate.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script>
-    $(document).ready(function(){
-      document.body.addEventListener("keydown", function(event) {
-          if (event.keyCode >= 65 && event.keyCode <= 90) {
-            form = document.getElementById("key_board");
-            myvar = document.createElement('input');
-            myvar.setAttribute('name', 'key');
-            myvar.setAttribute('type', 'hidden');
-            myvar.setAttribute('value', String.fromCharCode(event.keyCode));
-            form.appendChild(myvar);
-            form.submit();
-          }
-      });
-      });
-
-      </script>
+    <!-- javascript to provide the user with the possibility to use the keys on his/her keyboard -->
+    <script type="text/javascript" src="src/js-file.js"></script>
 
 </head>
 
@@ -87,7 +92,7 @@ if(!empty($_POST['key'])) {
 
     <div id="banner" class="section">
 
-        <h2 class="header">Phrase Hunter</h2>
+        <!-- <h2 class="header">Phrase Hunter</h2> -->
         <?php
         if($game_over_message = $game->gameOver())
         {
@@ -96,7 +101,7 @@ if(!empty($_POST['key'])) {
         else {
           echo $game->displayScore();
           echo $phrase_object->addPhraseToDisplay();
-          echo $game->displayKeyboard();
+          echo $game->displayKeyboard($display_keyboard);
         }
       ?>
 

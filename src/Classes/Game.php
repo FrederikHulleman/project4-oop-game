@@ -108,7 +108,14 @@ class Game
     $start_over_button .= '<input id="btn__reset" name="start" type="submit" value="Start Over" />' . PHP_EOL;
     $start_over_button .= '</form>' . PHP_EOL;
 
-    if($this->checkForWin() && !$this->checkForLose())
+    if($this->phrase->checkPhraseAnswer() && !$this->checkForLose())
+    {
+      return '<h1 id="game-over-message">WOW. Bonus! Congratulations on guessing: "'
+                . $this->phrase->getCurrentPhrase()
+                . '"</h1>' . PHP_EOL
+                . $start_over_button;
+    }
+    elseif($this->checkForWin() && !$this->checkForLose())
     {
       return '<h1 id="game-over-message">Congratulations on guessing: "'
                 . $this->phrase->getCurrentPhrase()
@@ -134,7 +141,7 @@ class Game
     Additionally, the class "correct" or "incorrect" should be added based on the checkLetter() method of the Phrase object.
     Return a string of HTML for the keyboard form.
   */
-  public function displayKeyboard()
+  public function displayKeyboard($display_keyboard)
   {
     $keyrows = array();
     $keyrows[] = array('q','w','e','r','t','y','u','i','o','p');
@@ -142,9 +149,12 @@ class Game
     $keyrows[] = array('z','x','c','v','b','n','m');
 
     $keyboard_string = '';
-    $keyboard_string .= '<p>Choose & Click your characters on this keyboard:</p>' . PHP_EOL;
+    $keyboard_string .= '<p>You can use your machine\'s keyboard. Click ' . PHP_EOL;
+    $keyboard_string .= '<a href="javascript:;" onclick="display_keyboard()">here</a>' . PHP_EOL;
+    $keyboard_string .= ' to hide or show the onscreen keyboard.</p>' . PHP_EOL;
+    $keyboard_string .= '<div id="qwerty" class="section" style="display:'.$display_keyboard.'">' . PHP_EOL;
     $keyboard_string .= '<form id="key_board" method="post" action="play.php">' . PHP_EOL;
-    $keyboard_string .= '<div id="qwerty" class="section">' . PHP_EOL;
+    $keyboard_string .= '<input type="hidden" name="display_keyboard" value='.$display_keyboard.'>' . PHP_EOL;
     foreach($keyrows as $keyrow) {
       $keyboard_string .= '<div class="keyrow">' . PHP_EOL;
 
@@ -169,10 +179,8 @@ class Game
 
       $keyboard_string .= '</div>' . PHP_EOL;
     }
-    $keyboard_string .= '</div>' . PHP_EOL;
     $keyboard_string .= '</form>' . PHP_EOL;
-
-
+    $keyboard_string .= '</div>' . PHP_EOL;
 
     return $keyboard_string;
   }

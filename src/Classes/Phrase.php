@@ -12,6 +12,7 @@ class Phrase
   */
   private $currentPhrase;
   private $selected = array();
+  private $phraseAnswer;
   private $phrase_array = ['Birds of a Feather Flock Together',
                             'On the Ropes',
                             'Knuckle Down',
@@ -108,6 +109,15 @@ class Phrase
 
   }
 
+  public function checkPhraseAnswer()
+  {
+    if($this->getCurrentPhrase() == $this->getPhraseAnswer()) {
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
 
   public function getCurrentPhrase()
   {
@@ -119,13 +129,40 @@ class Phrase
   {
     //thanks to https://stackoverflow.com/questions/659025/how-to-remove-non-alphanumeric-characters
     //make lower case, remove whitespace before and after, and remove non alphabetic characters
+
+    //thanks for removing multiple spaces
+    //see: https://www.techfry.com/php-tutorial/how-to-remove-whitespace-characters-in-a-string-in-php-trim-function
     $this->currentPhrase = strtolower(
                               trim(
                                 preg_replace("/[^A-Za-z ]/",'',
-                                  filter_var($value, FILTER_SANITIZE_STRING)
+                                  preg_replace('/\s+/', ' ',
+                                    filter_var($value, FILTER_SANITIZE_STRING)
+                                  )
                                 )
                               )
                             );
+  }
+
+  public function getPhraseAnswer()
+  {
+    return $this->phraseAnswer;
+  }
+
+  public function setPhraseAnswer($value)
+
+  {
+    //thanks to https://stackoverflow.com/questions/659025/how-to-remove-non-alphanumeric-characters
+    //make lower case, remove whitespace before and after, and remove non alphabetic characters
+
+    //thanks for removing multiple spaces
+    //see: https://www.techfry.com/php-tutorial/how-to-remove-whitespace-characters-in-a-string-in-php-trim-function
+    $this->phraseAnswer = strtolower(
+                            trim(
+                              preg_replace('/\s+/', ' ',
+                                  filter_var($value, FILTER_SANITIZE_STRING)
+                              )
+                            )
+                          );
   }
 
   public function getSelected()
