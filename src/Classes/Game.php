@@ -108,31 +108,41 @@ class Game
     $start_over_button .= '<input id="btn__reset" name="start" type="submit" value="Start Over" />' . PHP_EOL;
     $start_over_button .= '</form>' . PHP_EOL;
 
-    if($this->phrase->checkPhraseAnswer() && !$this->checkForLose())
+    if(!empty($this->phrase->getPhraseAnswer()))
     {
-      return '<h1 id="game-over-message">WOW. Bonus! Congratulations on guessing: "'
-                . $this->phrase->getCurrentPhrase()
-                . '"</h1>' . PHP_EOL
-                . $start_over_button;
-    }
-    elseif($this->checkForWin() && !$this->checkForLose())
-    {
-      return '<h1 id="game-over-message">Congratulations on guessing: "'
-                . $this->phrase->getCurrentPhrase()
-                . '"</h1>' . PHP_EOL
-                . $start_over_button;
-    }
-    elseif($this->checkForLose() && !$this->checkForWin())
-    {
-      return '<h1 id="game-over-message">The phrase was: "'
-                . $this->phrase->getCurrentPhrase()
-                . '". Better luck next time!</h1>' . PHP_EOL
-                . $start_over_button;
+      if($this->phrase->checkPhraseAnswer())
+      {
+        return '<h1 id="game-over-message">WOW. Bonus points!<br>You filled in the right phrase in one time: "'
+                  . $this->phrase->getCurrentPhrase()
+                  . '"</h1>' . PHP_EOL
+                  . $start_over_button;
+      }
+      else {
+        return '<h1 id="game-over-message">That\'s too bad! That wasn\'t the right phrase.<br>The phrase was: "'
+                  . $this->phrase->getCurrentPhrase()
+                  . '"</h1>' . PHP_EOL
+                  . $start_over_button;
+      }
     }
     else
     {
-      return FALSE;
+      if($this->checkForWin() && !$this->checkForLose())
+      {
+        return '<h1 id="game-over-message">Congratulations on guessing: "'
+                  . $this->phrase->getCurrentPhrase()
+                  . '"</h1>' . PHP_EOL
+                  . $start_over_button;
+      }
+      elseif($this->checkForLose() && !$this->checkForWin())
+      {
+        return '<h1 id="game-over-message">The phrase was: "'
+                  . $this->phrase->getCurrentPhrase()
+                  . '". Better luck next time!</h1>' . PHP_EOL
+                  . $start_over_button;
+      }
     }
+    return FALSE;
+
   }
 
   /*
@@ -141,7 +151,7 @@ class Game
     Additionally, the class "correct" or "incorrect" should be added based on the checkLetter() method of the Phrase object.
     Return a string of HTML for the keyboard form.
   */
-  public function displayKeyboard($display_keyboard)
+  public function displayKeyboard()
   {
     $keyrows = array();
     $keyrows[] = array('q','w','e','r','t','y','u','i','o','p');
@@ -149,12 +159,11 @@ class Game
     $keyrows[] = array('z','x','c','v','b','n','m');
 
     $keyboard_string = '';
-    $keyboard_string .= '<p>You can use your machine\'s keyboard. Click ' . PHP_EOL;
-    $keyboard_string .= '<a href="javascript:;" onclick="display_keyboard()">here</a>' . PHP_EOL;
-    $keyboard_string .= ' to hide or show the onscreen keyboard.</p>' . PHP_EOL;
-    $keyboard_string .= '<div id="qwerty" class="section" style="display:'.$display_keyboard.'">' . PHP_EOL;
+    $keyboard_string .= '<p>You can use your machine\'s keyboard. ' . PHP_EOL;
+    $keyboard_string .= '<a id="toggle_link" href="javascript:;" onclick="display_keyboard()">Click here to show the onscreen keyboard.</a>' . PHP_EOL;
+    $keyboard_string .= '</p>' . PHP_EOL;
+    $keyboard_string .= '<div id="qwerty" class="section" style="display:none">' . PHP_EOL;
     $keyboard_string .= '<form id="key_board" method="post" action="play.php">' . PHP_EOL;
-    $keyboard_string .= '<input type="hidden" name="display_keyboard" value='.$display_keyboard.'>' . PHP_EOL;
     foreach($keyrows as $keyrow) {
       $keyboard_string .= '<div class="keyrow">' . PHP_EOL;
 

@@ -17,17 +17,9 @@ session_start();
 require 'src/config.php';
 $selected = array();
 $current_phrase = '';
-$display_keyboard = '';
+$phrase_answer = '';
 
-//to read the previous keyboard display setting: none or block
-if(!empty($_POST['display_keyboard'])) {
-  $display_keyboard = filter_input(INPUT_POST,'display_keyboard',FILTER_SANITIZE_STRING);
-}
-else {
-  $display_keyboard = 'none';
-}
-
-if($_SERVER['REQUEST_METHOD'] != "POST" || empty($_POST['key'])) {
+if($_SERVER['REQUEST_METHOD'] != "POST" || (empty($_POST['key']) && empty($_POST['to_answer']) && empty($_POST['submit_answer']))) {
   session_destroy();
   $_SESSION['selected'] = array();
   $_SESSION['current_phrase'] = '';
@@ -59,17 +51,11 @@ if(!empty($_POST['key'])) {
   $_SESSION['selected'] = $phrase_object->getSelected();
 }
 
-$phrase_object->setPhraseAnswer(' i     smell a    rat     ');
-
-echo "phrase current: " . $phrase_object->getCurrentPhrase() . '<br>';
-echo "phrase answer: " . $phrase_object->getPhraseAnswer() . '<br>';
-
-if($phrase_object->checkPhraseAnswer()) {
-  echo "Phrase answered corectly;";
-} else {
-  echo "Phrase answered incorectly;";
+if(!empty($_POST['submit_answer'])) {
+  $words = filter_input(INPUT_POST,'words',FILTER_SANITIZE_STRING,FILTER_REQUIRE_ARRAY);
+  $phrase_answer = implode(' ',$words);
+  $phrase_object->setPhraseAnswer($phrase_answer);
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -99,9 +85,18 @@ if($phrase_object->checkPhraseAnswer()) {
           echo $game_over_message;
         }
         else {
-          echo $game->displayScore();
-          echo $phrase_object->addPhraseToDisplay();
-          echo $game->displayKeyboard($display_keyboard);
+
+          //if the user wants to fill in the full phrase, display the input text fields
+          if(!empty($_POST['to_answer'])) {
+            echo $phrase_object->displayInputFullPhrase();
+          }
+          else {
+            echo $game->displayScore();
+            echo $phrase_object->addPhraseToDisplay();
+            echo $game->displayKeyboard();
+          }
+
+
         }
       ?>
 

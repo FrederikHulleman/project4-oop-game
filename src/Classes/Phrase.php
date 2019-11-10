@@ -51,6 +51,9 @@ class Phrase
   public function addPhraseToDisplay()
   {
     $display_phrase = '<div id="phrase" class="section">' . PHP_EOL;
+    $display_phrase .= '<form method="post" action="play.php">' . PHP_EOL;
+    $display_phrase .= '<input id="btn__answer" name="to_answer" type="submit" value="Fill in full phrase" />' . PHP_EOL;
+    $display_phrase .= '</form>' . PHP_EOL;
     $display_phrase .= '<ul>' . PHP_EOL;
 
     //thanks to https://stackoverflow.com/questions/4601032/php-iterate-on-string-characters
@@ -82,6 +85,57 @@ class Phrase
     $display_phrase .= '</div>' . PHP_EOL;
 
     return $display_phrase;
+  }
+
+  public function displayInputFullPhrase()
+  {
+    $display_full_phrase = '';
+    $words = explode(' ',$this->getCurrentPhrase());
+
+    $display_full_phrase = '<div id="phrase" class="section">' . PHP_EOL;
+    $display_full_phrase .= '<form method="post" action="play.php">' . PHP_EOL;
+    foreach($words as $key=>$word) {
+      $display_full_phrase .= '<input id="btn__answer" size="'.strlen($word).'" maxlength="'.strlen($word).'" name="words[]" type="text" placeholder="Word ' . ($key+1) .'" />' . PHP_EOL;
+    }
+    $display_full_phrase .= '<input id="btn__answer" name="submit_answer" type="submit" value="Am I right?" />' . PHP_EOL;
+    $display_full_phrase .= '</form>' . PHP_EOL;
+    $display_full_phrase .= '</div>' . PHP_EOL;
+
+    // $display_full_phrase = '<div id="phrase" class="section">' . PHP_EOL;
+    // $display_full_phrase .= '<form method="post" action="play.php">' . PHP_EOL;
+    // $display_full_phrase .= '<input id="btn__answer" name="give_answer" type="submit" value="Fill in full phrase" />' . PHP_EOL;
+    // $display_full_phrase .= '</form>' . PHP_EOL;
+    // $display_full_phrase .= '<ul>' . PHP_EOL;
+    //
+    // //thanks to https://stackoverflow.com/questions/4601032/php-iterate-on-string-characters
+    // $characters = str_split($this->currentPhrase);
+    // //start position to look for a space to add a BR
+    // $next_new_line = 10;
+    // foreach ($characters as $key=>$character)
+    // {
+    //   $display_full_phrase .= '<li class="';
+    //
+    //   if($character == " ") {
+    //     $display_full_phrase .= 'hide space"> ';
+    //   } else {
+    //     if(in_array($character,$this->getSelected())) {
+    //       $display_full_phrase .= 'show ';
+    //     } else {
+    //       $display_full_phrase .= 'hide ';
+    //     }
+    //     $display_full_phrase .= 'letter '.$character.'">'.$character.'</li>' . PHP_EOL;
+    //   }
+    //   $display_full_phrase .= '</li>' . PHP_EOL;
+    //
+    //   if($character == " " && $key>= $next_new_line) {
+    //     $display_full_phrase .= '<br>' . PHP_EOL;
+    //     $next_new_line = $key + 10;
+    //   }
+    // }
+    // $display_full_phrase .= '</ul>' . PHP_EOL;
+    // $display_full_phrase .= '</div>' . PHP_EOL;
+
+    return $display_full_phrase;
   }
 
   /*

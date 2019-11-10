@@ -66,7 +66,8 @@ input[type=submit].correct {
   background-color: var(--color-win);
 }
 
-#btn__reset {
+#btn__reset,
+#btn__answer {
 	width: 200px;
 	margin: 0 auto;
 }
@@ -162,7 +163,8 @@ input[type=submit].correct {
   color: #FFFFFF;
 }
 
-.btn__reset {
+.btn__reset,
+.btn__answer {
   padding: 16px;
   margin: 50px auto;
   background: #f7a964;
@@ -173,7 +175,8 @@ input[type=submit].correct {
   border-right: solid 3px rgba(0, 0, 0, .3)
 }
 
-.btn__reset:active {
+.btn__reset:active,
+.btn__answer:active {
   padding: 14px 16px 16px 14px;
   border-bottom: solid 4px rgba(0, 0, 0, 0);
   border-right: solid 3px rgba(0, 0, 0, 0);
