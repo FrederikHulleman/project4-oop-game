@@ -6,13 +6,25 @@ Game.php to create a Game class with methods for showing the game, handling inte
 class Game
 {
   /*
-    The class must have at least two properties:
+  The Game class properties:
     - $phrase an instance of the Phrase class to use with the game
     - $lives an integer for the number of wrong chances to guess the phrase
+    - $maxLives an integer for maximum number of wrong changes to guess the phrase. This property is used to calculated the lives property: lives = maxLives minus #incorrect characters
+
+  The Game class methods:
+    - __construct($phrase) > initialize object with a phrase object
+    - getLives() > returns how many wrong changes the user has to guess the phrase
+    - setLives($lives) > sets how many wrong changes the user has to guess the phrase
+    - checkForWin() > validates whether the user guessed all correct characters
+    - checkForLose() > validates whether the user has 0 lives left, or not
+    - gameOver() > validates whether the games has ended or not, and if not, whether the user won or lost (for both scenario's: answered full phrase,
+          or by entering character by character). Prepares the  HTML to display the message 
+    - displayKeyboard() > prepares HTML string with styling for the onscreen keyboard
+    - displayScore() > prepare HTML to display how many lives the user still has
   */
   private $phrase;
   private $lives;
-  private $max_lives = 5;
+  private $maxLives = 5;
 
   /*
     The class should include a constructor which accepts a Phrase object and sets the property
@@ -37,29 +49,12 @@ class Game
   */
   public function checkForWin()
   {
-    //thanks to https://www.php.net/manual/en/function.array-filter.php
-    //create an array with previous selected characters which were correct. Each character from the selected array from the phrase, is validated by using the checkLetter method of the phrase
-    $selected_correct_characters = array_filter(
-                                      $this->phrase->getSelected(),
-                                      array($this->phrase,'checkLetter')
-                                    );
-
-    //thanks to https://www.php.net/manual/en/function.count-chars.php
-    //create an array with all allowable unique characters in the phrase
-    //count_chars gives a string with all unique characters in the phrase
-    //str_split creates an array with all unique characters
-    $all_correct_characters = str_split(
-                          count_chars(
-                            str_replace(' ','',$this->phrase->getCurrentPhrase())
-                          ,3)
-                        );
-
     //thanks to https://www.php.net/manual/en/function.array-diff.php
     //compare all unique characters in the phrase with all correctly selected characters.
-    //$diff is the array with the values which are in the 1st array, but not in the 2nd array. So these are the remaining correct characters the user still has to select.
-    $diff = array_diff($all_correct_characters,$selected_correct_characters);
+    //$remaining_correct_characters is the array with the values which are in the 1st array, but not in the 2nd array. So these are the remaining correct characters the user still has to select.
+    $remaining_correct_characters = array_diff($this->phrase->getCurrentPhraseAllCharacters(),$this->phrase->getSelectedCorrect());
 
-    if(empty($diff) && is_array($diff)) {
+    if(empty($remaining_correct_characters) && is_array($remaining_correct_characters)) {
       return TRUE;
     }
     return FALSE;
@@ -71,26 +66,16 @@ class Game
 
   public function checkForLose()
   {
-    //thanks to https://www.php.net/manual/en/function.count-chars.php
-    //create an array with all allowable unique characters in the phrase
-    //count_chars (mode 3) gives a string with all unique characters in the phrase
-    //str_split creates an array with all unique characters
-    $all_correct_characters = str_split(
-                                count_chars(
-                                  str_replace(' ','',$this->phrase->getCurrentPhrase())
-                                ,3) // mode 3: to give a string of all unique characters in string
-                              );
-
     //thanks to https://www.php.net/manual/en/function.array-diff.php
-    //compare all unique characters in the phrase with all correctly selected characters.
-    //$diff is the array with the values which are in the 1st array, but not in the 2nd array. So these are the remaining correct characters the user still has to select.
+    //compare all selected characters from phrase->getSelected() with the unique characters in the phrase from phrase->getCurrentPhraseAllCharacters()
+    //$incorrect_characters is the array with the values which are in the 1st array, but not in the 2nd array. So these are all incorrect characters.
+    $incorrect_characters = array_diff($this->phrase->getSelected(),$this->phrase->getCurrentPhraseAllCharacters());
 
-    $diff = array_diff($this->phrase->getSelected(),$all_correct_characters);
-
-    if(is_array($diff)) {
-      $count_incorrect = count($diff);
-      $this->setLives($this->max_lives - $count_incorrect);
-      if($count_incorrect >= 5) {
+    if(is_array($incorrect_characters)) {
+      $count_incorrect = count($incorrect_characters);
+      //set remaining lives
+      $this->setLives($this->maxLives - $count_incorrect);
+      if($this->getLives() == 0) {
         return TRUE;
       }
     }
@@ -103,45 +88,54 @@ class Game
   */
   public function gameOver()
   {
+    $image = $game_over_message = '';
 
+    $start_tag = '<h1 id="game-over-message">' . PHP_EOL;
+    $end_tag = '</h1>' . PHP_EOL;
+
+    //the html for the button to start over
     $start_over_button = '<form method="post" action="play.php">' . PHP_EOL;
     $start_over_button .= '<input id="btn__reset" name="start" type="submit" value="Start Over" />' . PHP_EOL;
     $start_over_button .= '</form>' . PHP_EOL;
 
+    //check whether the user has submitted a full phrase answer, if he/she did:
     if(!empty($this->phrase->getPhraseAnswer()))
     {
+      //if the full phrase answer is correct:
       if($this->phrase->checkPhraseAnswer())
       {
-        return '<img src="images/win.gif" />'
-                  . '<h1 id="game-over-message">WOW. Bonus points!<br>You filled in the right phrase in one time: "'
-                  . $this->phrase->getCurrentPhrase()
-                  . '"</h1>' . PHP_EOL
-                  . $start_over_button;
+        $image = '<img src="images/win.gif" />' . PHP_EOL;
+        $game_over_message = 'WOW. Bonus points!<br>You filled in the right phrase in one time: ';
       }
+      //if the full phrase answer is incorrect:
       else {
-        return '<img src="images/lose.gif" />'
-                  . '<h1 id="game-over-message">That\'s too bad! That wasn\'t the right phrase.<br>The phrase was: "'
-                  . $this->phrase->getCurrentPhrase()
-                  . '"</h1>' . PHP_EOL
-                  . $start_over_button;
+        $image = '<img src="images/lose.gif" />' . PHP_EOL;
+        $game_over_message = 'That\'s too bad! That wasn\'t the right phrase.<br>The phrase was: ';
       }
     }
+    //if no full phrase answer was submitted:
     else
     {
+      //checkForWin says all correct characters have been selected, and checkForLose says less than maxLives incorrect characters were submitted
       if($this->checkForWin() && !$this->checkForLose())
       {
-        return '<h1 id="game-over-message">Congratulations on guessing: "'
-                  . $this->phrase->getCurrentPhrase()
-                  . '"</h1>' . PHP_EOL
-                  . $start_over_button;
+        $game_over_message = 'Congratulations on guessing: ';
       }
+      //checkForWin says not all correct characters have been selected, and checkForLose says maxLives or more incorrect characters were submitted
       elseif($this->checkForLose() && !$this->checkForWin())
       {
-        return '<h1 id="game-over-message">The phrase was: "'
-                  . $this->phrase->getCurrentPhrase()
-                  . '". Better luck next time!</h1>' . PHP_EOL
-                  . $start_over_button;
+        $game_over_message = 'Better luck next time! The phrase was: ';
       }
+    }
+
+    if(!empty($game_over_message)) {
+      $output = $image
+                . $start_tag
+                . $game_over_message
+                . '"'. $this->phrase->getCurrentPhrase() . '"'
+                . $end_tag
+                . $start_over_button;
+      return $output;
     }
     return FALSE;
 
@@ -155,20 +149,27 @@ class Game
   */
   public function displayKeyboard()
   {
+    //create array with all keys and rows
     $keyrows = array();
     $keyrows[] = array('q','w','e','r','t','y','u','i','o','p');
     $keyrows[] = array('a','s','d','f','g','h','j','k','l');
     $keyrows[] = array('z','x','c','v','b','n','m');
 
     $keyboard_string = '';
+    //info & link for the user to hide or show on screen keyboard
     $keyboard_string .= '<p>You can use your machine\'s keyboard. ' . PHP_EOL;
     $keyboard_string .= '<a id="toggle_link" href="javascript:;" onclick="display_keyboard()">Click here to show the onscreen keyboard.</a>' . PHP_EOL;
     $keyboard_string .= '</p>' . PHP_EOL;
     $keyboard_string .= '<div id="qwerty" class="section" style="display:block">' . PHP_EOL;
+
+    //start form
     $keyboard_string .= '<form id="key_board" method="post" action="play.php">' . PHP_EOL;
+
+    // walk through row by row
     foreach($keyrows as $keyrow) {
       $keyboard_string .= '<div class="keyrow">' . PHP_EOL;
 
+      // walk through key by key
       foreach($keyrow as $key) {
         $keyboard_string .= '<button id="key" name="key" value="'.$key.'"';
 
@@ -178,8 +179,9 @@ class Game
         //reset styling when character was selected and correct or incorrect
         if(in_array($key,$this->phrase->getSelected())) {
           $styling = ' class="key ';
+          //if character was incorrect
           if(!$this->phrase->checkLetter($key)) {
-             $styling .= 'in';
+            $styling .= 'in';
           }
           $styling .= 'correct" disabled';
         }
@@ -207,12 +209,12 @@ class Game
     $score_string .= '<p>Remaining lives:</p>' . PHP_EOL;
     $score_string .= '<ol>' . PHP_EOL;
 
-    for ($i=1; $i <= $this->max_lives; $i++) {
+    for ($i=1; $i <= $this->maxLives; $i++) {
       $score_string .= '<li class="tries"><img src="images/';
       if ($i <= $this->getLives()) {
-        $score_string .= 'liveHeart.png" class="hearts"';
+        $score_string .= 'liveHeart.png" class="lives heartBeat"';
       } else {
-        $score_string .= 'lostHeart.png"';
+        $score_string .= 'lostHeart.png" class="looseHearts"';
       }
       $score_string .= ' height="35px" widght="30px"></li>' . PHP_EOL;
     }

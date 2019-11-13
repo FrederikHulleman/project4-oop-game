@@ -250,7 +250,12 @@ input[type=submit].correct {
 
 /* Score */
 /* thanks to https://codepen.io/taryaoui/pen/EKkcu */
-.hearts {
+.lives {
   -webkit-filter: opacity(.5) drop-shadow(0 0 0 red);
   filter: opacity(.5) drop-shadow(0 0 0 red);
+}
+
+.looseHearts {
+  -webkit-filter: opacity(.5) drop-shadow(0 0 0 grey);
+  filter: opacity(.5) drop-shadow(0 0 0 grey);
 }

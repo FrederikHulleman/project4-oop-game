@@ -15,7 +15,7 @@ In the body of the page you should play the game. To play the game:
 
 session_start();
 require 'src/config.php';
-$selected = array();
+$selected = $words = array();
 $current_phrase = '';
 $phrase_answer = '';
 $show_full_answer_screen = false;
@@ -61,14 +61,22 @@ elseif(!empty($_POST['go_back'])) {
 
 if(!empty($_POST['submit_answer'])) {
   $words = filter_input(INPUT_POST,'words',FILTER_SANITIZE_STRING,FILTER_REQUIRE_ARRAY);
-  $phrase_answer = implode(' ',$words);
-  if(!empty(str_replace(' ','',$phrase_answer))) {
+
+  $continue = true;
+  foreach($words as $word) {
+    if(empty($word)) {
+      $continue = false;
+    }
+  }
+
+  if ($continue) {
+    $phrase_answer = implode(' ',$words);
     $phrase_object->setPhraseAnswer($phrase_answer);
     $show_full_answer_screen = false;
   }
   else {
     $show_full_answer_screen = true;
-    $message = 'You didn\'t fill in any words';
+    $message = 'You didn\'t fill in all words';
   }
 }
 ?>
@@ -105,10 +113,8 @@ if(!empty($_POST['submit_answer'])) {
 
           //if the user wants to fill in the full phrase, display the input text fields
           if($show_full_answer_screen) {
-            if(count($phrase_object->getSelected()) > 0) {
-              echo $phrase_object->addPhraseToDisplay($show_full_answer_screen);
-            }
-            echo $phrase_object->displayInputFullPhrase();
+            echo $phrase_object->addPhraseToDisplay($show_full_answer_screen);
+            echo $phrase_object->displayInputFullPhrase($words);
           }
           else {
             echo $game->displayScore();
@@ -126,6 +132,7 @@ if(!empty($_POST['submit_answer'])) {
 <script type="text/javascript">
   var mode = '<?php if ($show_full_answer_screen) {echo 'full_answer';} else {echo 'single_characters';} ?>';
 </script>
-<script type="text/javascript" src="src/js-file.js"></script>
+<script type="text/javascript" src="src/functions.js"></script>
+<script type="text/javascript" src="src/main.js"></script>
 </body>
 </html>

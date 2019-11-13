@@ -1,18 +1,19 @@
-//make sure the keyboard display prefrence from the user storing in a cookie is applied to the keyboard
+// if mode = single_characters, means that the javascript is executed related to the keyboard hide/show and to 'listen' to keydown events
 if(mode == 'single_characters') {
+  //make sure the keyboard display prefrence from the user is retrieved from the cookie and is applied to the keyboard
   //thanks for toggle display to https://www.w3schools.com/howto/howto_js_toggle_hide_show.asp
   var qwerty = document.getElementById("qwerty");
   var keyboard_display = getCookie('keyboard_display');
   var toggle_link = document.getElementById('toggle_link');
-  if (keyboard_display === "block") {
-    qwerty.style.display = "block";
-    setCookie('keyboard_display', "block", 7);
-    toggle_link.innerHTML = 'Click here to hide the onscreen keyboard.';
-  }
-  else {
+  if (keyboard_display === "none") {
     qwerty.style.display = "none";
     setCookie('keyboard_display', "none", 7);
     toggle_link.innerHTML = 'Click here to show the onscreen keyboard.';
+  }
+  else {
+    qwerty.style.display = "block";
+    setCookie('keyboard_display', "block", 7);
+    toggle_link.innerHTML = 'Click here to hide the onscreen keyboard.';
   }
   //function to use keydown event and to submit the chosen key
   //thanks for setting input values to https://stackoverflow.com/questions/1350917/send-post-variable-with-javascript
@@ -29,6 +30,7 @@ if(mode == 'single_characters') {
     }
   });
 }
+// if mode = full_answer, means that the javascript is executed related to keyup events and shift the focus to the next or previous input
 else if(mode == 'full_answer') {
   //changing focus to next input field when an input field has reached is max length
   //changing focus to previous input field when delete or backspace was used to remove all characters from an input field
@@ -61,46 +63,4 @@ else if(mode == 'full_answer') {
         }
     }
   });
-}
-
-//the function to show or hide the onscreen keyboard
-function display_keyboard() {
-  //thanks for toggle display to https://www.w3schools.com/howto/howto_js_toggle_hide_show.asp
-  //thanks for setting input values to https://stackoverflow.com/questions/1350917/send-post-variable-with-javascript
-  var qwerty = document.getElementById("qwerty");
-  var toggle_link = document.getElementById('toggle_link');
-  if (qwerty.style.display === "none") {
-    qwerty.style.display = "block";
-    setCookie('keyboard_display', 'block', 7);
-    toggle_link.innerHTML = 'Click here to hide the onscreen keyboard.';
-  } else {
-    qwerty.style.display = "none";
-    setCookie('keyboard_display', 'none', 7);
-    toggle_link.innerHTML = 'Click here to show the onscreen keyboard.';
-  }
-}
-
-//thanks to https://www.w3schools.com/js/js_cookies.asp
-function setCookie(cname, cvalue, exdays) {
-  var d = new Date();
-  d.setTime(d.getTime() + (exdays*24*60*60*1000));
-  var expires = "expires="+ d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
-
-//thanks to https://www.w3schools.com/js/js_cookies.asp
-function getCookie(cname) {
-  var name = cname + "=";
-  var decodedCookie = decodeURIComponent(document.cookie);
-  var ca = decodedCookie.split(';');
-  for(var i = 0; i <ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
 }
