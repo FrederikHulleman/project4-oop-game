@@ -5,11 +5,13 @@ function display_keyboard() {
   //default is to show the keyboard (display block)
   var qwerty = document.getElementById("qwerty");
   var toggle_link = document.getElementById('toggle_link');
+  //if current display is none, then switch to block, save it to a cookie and change the text of the link
   if (qwerty.style.display === "none") {
     qwerty.style.display = "block";
     setCookie('keyboard_display', 'block', 7);
     toggle_link.innerHTML = 'Click here to hide the onscreen keyboard.';
   } else {
+    //if current display is NOT none, then switch to none, save it to a cookie and change the text of the link 
     qwerty.style.display = "none";
     setCookie('keyboard_display', 'none', 7);
     toggle_link.innerHTML = 'Click here to show the onscreen keyboard.';

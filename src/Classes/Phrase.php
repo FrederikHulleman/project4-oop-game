@@ -48,7 +48,7 @@ class Phrase
   /*
     The class must include a constructor that accepts two OPTIONAL parameters:
     - $phrase a string, or if empty, get a random phrase
-    - $selected an array of selected letters
+    - $selected an array of selected letters, or if empty, do nothing
   */
   public function __construct($phrase=null,$selected=[])
   {
@@ -57,6 +57,7 @@ class Phrase
         $this->setCurrentPhrase($phrase);
     }
     else {
+        //set random  phrase from phraseArray
         $this->setCurrentPhrase($this->phraseArray[array_rand($this->phraseArray)]);
     }
 
@@ -76,10 +77,10 @@ class Phrase
   public function setCurrentPhrase($value)
   {
     $normalized_phrase = $this->normalizeStringsAndCharacters($value);
+    //if the phrase is not empty and exists only of alphabetic characters and spaces, then the currentPhrase is stored
     if(strlen($normalized_phrase) > 0 && ctype_alpha(str_replace(' ','',$normalized_phrase))) {
       $this->currentPhrase = $normalized_phrase;
     }
-
   }
 
   public function getPhraseAnswer()
@@ -90,11 +91,13 @@ class Phrase
   public function setPhraseAnswer($value)
   {
     $normalized_phrase_answer = $this->normalizeStringsAndCharacters($value);
+    //if the phrase answer is not empty and exists only of alphabetic characters and spaces, then the phrase answer is stored
     if(strlen($normalized_phrase_answer) > 0 && ctype_alpha(str_replace(' ','',$normalized_phrase_answer))) {
       $this->phraseAnswer = $normalized_phrase_answer;
     }
   }
 
+  //validate whether the phrase answer matches with the current phrase > used by the game over method of class game
   public function checkPhraseAnswer()
   {
     if($this->getCurrentPhrase() == $this->getPhraseAnswer()) {
@@ -109,6 +112,7 @@ class Phrase
     return $this->selected;
   }
 
+  //only get the correctly guessed characters
   public function getSelectedCorrect()
   {
     //thanks to https://www.php.net/manual/en/function.array-filter.php
@@ -130,6 +134,7 @@ class Phrase
     }
   }
 
+  //removes all unnecessary spaces and non alphabetic characters
   public function normalizeStringsAndCharacters($value)
   {
     //thanks to https://stackoverflow.com/questions/659025/how-to-remove-non-alphanumeric-characters
@@ -139,8 +144,11 @@ class Phrase
     //see: https://www.techfry.com/php-tutorial/how-to-remove-whitespace-characters-in-a-string-in-php-trim-function
 
     $normalized_output = strtolower(
+                          //remove all spaces at the beginning and end of the input value
                           trim(
+                            //to remove all characters, except for alphabetic characters and spaces
                             preg_replace("/[^A-Za-z ]/",'',
+                              //to remove multiple spaces, and replace those with 1 space
                               preg_replace('/\s+/', ' ',
                                 filter_var($value, FILTER_SANITIZE_STRING)
                               )
@@ -168,12 +176,13 @@ class Phrase
 
   }
 
+  //returns all unique characters from the phrase > used by Game methods checkForLose() & checkForWin()
   public function getCurrentPhraseAllCharacters()
   {
     //thanks to https://www.php.net/manual/en/function.count-chars.php
     //create an array with all allowable unique characters in the phrase
-    //count_chars gives a string with all unique characters in the phrase
-    //str_split creates an array with all unique characters
+    //count_chars returns a string with all unique characters in the phrase
+    //str_split returns an array with all unique characters
     $all_correct_characters = str_split(
                           count_chars(
                             str_replace(' ','',$this->getCurrentPhrase())
@@ -192,28 +201,35 @@ class Phrase
   {
     $display_phrase = '<div id="phrase" class="section">' . PHP_EOL;
 
-    //if the user asked to fill in the full phrase, then this button doesn't have to be dispayed
-    if(!$show_full_answer_screen) {
-      $display_phrase .= '<form method="post" action="play.php">' . PHP_EOL;
-      $display_phrase .= '<input id="btn__answer" name="to_answer" type="submit" value="I know the answer" />' . PHP_EOL;
-      $display_phrase .= '</form>' . PHP_EOL;
-    }
-    else {
-      if(count($this->getSelected()) > 0) {
+    //if the user asked to fill in the full phrase, then the 'I know the answer' button doesn't have to be dispayed
+    if($show_full_answer_screen) {
+      //if the user already guessed some correct characters, then the letter boxes are displayed with a message
+      if(count($this->getSelectedCorrect()) > 0) {
         $display_phrase .= '<h3 class="header">You\'ve already guessed the following characters:</h3>' . PHP_EOL;
       } else {
-        $display_phrase .= '<h3 class="header">Wow, that\'s very brave! You haven\'t guessed any characters yet and you already know the answer. Good luck :)</h3>' . PHP_EOL;
+        //if the user didn't guess any correct characters yet, only a message is shown, without the letter boxes
+        $display_phrase .= '<h3 class="header">Wow, that\'s very brave! You haven\'t correctly guessed any characters yet and you already know the answer. Good luck :)</h3>' . PHP_EOL;
         $display_phrase .= '</div>' . PHP_EOL;
         return $display_phrase;
       }
     }
+    //the user still is in  the  'single character' mode, so the 'i know the answer' button should be displayed
+    else {
+      $display_phrase .= '<form method="post" action="play.php">' . PHP_EOL;
+      $display_phrase .= '<input id="btn__answer" name="to_answer" type="submit" value="I know the answer" />' . PHP_EOL;
+      $display_phrase .= '</form>' . PHP_EOL;
+    }
     $display_phrase .= '<ul>' . PHP_EOL;
 
     //thanks to https://stackoverflow.com/questions/4601032/php-iterate-on-string-characters
+    //convert the current  phrase into an array with only single characters
     $characters = str_split($this->currentPhrase);
-    //start position to look for a space to add a BR
+
+    //start position to look for a space to add a new line for the letter boxes
     $next_new_line = 10;
 
+    //to make the last entered character 'flash' if it was correct, the last added character is selected here
+    //note: the last character from selected can also be incorrect, which is fine, because nothing should 'flash' in that case
     $all_selected_characters = $this->getSelected();
     $last_selected_character = end($all_selected_characters);
 
@@ -224,10 +240,11 @@ class Phrase
       if($character == " ") {
         $display_phrase .= 'hide space"> ';
       } else {
+        //determine if the character matches with the last guessed character, if yes, this character should 'flash', unless when the user wants to enter the full phrase answer
         if($character == $last_selected_character && !$show_full_answer_screen) {
            $display_phrase .= 'flash ';
         }
-        if(in_array($character,$this->getSelected())) {
+        if(in_array($character,$this->getSelectedCorrect())) {
           $display_phrase .= 'show ';
         } else {
           $display_phrase .= 'hide ';
@@ -236,6 +253,7 @@ class Phrase
       }
       $display_phrase .= '</li>' . PHP_EOL;
 
+      //add a new line break after 10 characters or more, and if the current character is a space
       if($character == " " && $key>= $next_new_line) {
         $display_phrase .= '<br>' . PHP_EOL;
         $next_new_line = $key + 10;
@@ -247,19 +265,24 @@ class Phrase
     return $display_phrase;
   }
 
+  //prepare HTML string for full phrase answer form.
   public function displayInputFullPhrase($words_submitted = [])
   {
     $display_full_phrase = '';
+    //create a word array based on the current  phrase
     $words = explode(' ',$this->getCurrentPhrase());
     $display_full_phrase .= '<h3 class="header">Fill in the full phrase:</h3>' . PHP_EOL;
     $display_full_phrase .= '<form method="post" action="play.php">' . PHP_EOL;
     $display_full_phrase .= '<div class="section">' . PHP_EOL;
     foreach($words as $key=>$word) {
+      //the size and maxlength are dependent on the length of the current word.
       $display_full_phrase .= '<input id="word'.($key+1).'" type="text" name="words[]" size="'.(strlen($word)+1).'" maxlength="'.strlen($word).'"';
       if($key==0) {
+        //the first input field gets autofocus
         $display_full_phrase .= ' autofocus';
       }
       if (!empty($words_submitted[$key])) {
+        //if some words were submitted earlier, they are displayed
         $display_full_phrase .= ' value="'.$words_submitted[$key].'"';
       }
       $display_full_phrase .= ' />' . PHP_EOL;

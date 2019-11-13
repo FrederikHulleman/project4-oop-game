@@ -18,7 +18,7 @@ class Game
     - checkForWin() > validates whether the user guessed all correct characters
     - checkForLose() > validates whether the user has 0 lives left, or not
     - gameOver() > validates whether the games has ended or not, and if not, whether the user won or lost (for both scenario's: answered full phrase,
-          or by entering character by character). Prepares the  HTML to display the message 
+          or by entering character by character). Prepares the  HTML to display the message
     - displayKeyboard() > prepares HTML string with styling for the onscreen keyboard
     - displayScore() > prepare HTML to display how many lives the user still has
   */
@@ -211,8 +211,10 @@ class Game
 
     for ($i=1; $i <= $this->maxLives; $i++) {
       $score_string .= '<li class="tries"><img src="images/';
+      //liveHeart png for remaining lives
       if ($i <= $this->getLives()) {
         $score_string .= 'liveHeart.png" class="lives heartBeat"';
+      //looseHearts for lost lives 
       } else {
         $score_string .= 'lostHeart.png" class="looseHearts"';
       }
