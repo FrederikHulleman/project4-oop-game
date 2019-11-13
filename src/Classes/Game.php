@@ -112,13 +112,15 @@ class Game
     {
       if($this->phrase->checkPhraseAnswer())
       {
-        return '<h1 id="game-over-message">WOW. Bonus points!<br>You filled in the right phrase in one time: "'
+        return '<img src="images/win.gif" />'
+                  . '<h1 id="game-over-message">WOW. Bonus points!<br>You filled in the right phrase in one time: "'
                   . $this->phrase->getCurrentPhrase()
                   . '"</h1>' . PHP_EOL
                   . $start_over_button;
       }
       else {
-        return '<h1 id="game-over-message">That\'s too bad! That wasn\'t the right phrase.<br>The phrase was: "'
+        return '<img src="images/lose.gif" />'
+                  . '<h1 id="game-over-message">That\'s too bad! That wasn\'t the right phrase.<br>The phrase was: "'
                   . $this->phrase->getCurrentPhrase()
                   . '"</h1>' . PHP_EOL
                   . $start_over_button;
@@ -162,7 +164,7 @@ class Game
     $keyboard_string .= '<p>You can use your machine\'s keyboard. ' . PHP_EOL;
     $keyboard_string .= '<a id="toggle_link" href="javascript:;" onclick="display_keyboard()">Click here to show the onscreen keyboard.</a>' . PHP_EOL;
     $keyboard_string .= '</p>' . PHP_EOL;
-    $keyboard_string .= '<div id="qwerty" class="section" style="display:none">' . PHP_EOL;
+    $keyboard_string .= '<div id="qwerty" class="section" style="display:block">' . PHP_EOL;
     $keyboard_string .= '<form id="key_board" method="post" action="play.php">' . PHP_EOL;
     foreach($keyrows as $keyrow) {
       $keyboard_string .= '<div class="keyrow">' . PHP_EOL;
@@ -208,11 +210,11 @@ class Game
     for ($i=1; $i <= $this->max_lives; $i++) {
       $score_string .= '<li class="tries"><img src="images/';
       if ($i <= $this->getLives()) {
-        $score_string .= 'liveHeart';
+        $score_string .= 'liveHeart.png" class="hearts"';
       } else {
-        $score_string .= 'lostHeart';
+        $score_string .= 'lostHeart.png"';
       }
-      $score_string .= '.png" height="35px" widght="30px"></li>' . PHP_EOL;
+      $score_string .= ' height="35px" widght="30px"></li>' . PHP_EOL;
     }
 
     $score_string .= '</ol>' . PHP_EOL;

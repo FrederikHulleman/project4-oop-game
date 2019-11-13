@@ -18,8 +18,9 @@ require 'src/config.php';
 $selected = array();
 $current_phrase = '';
 $phrase_answer = '';
+$show_full_answer_screen = false;
 
-if($_SERVER['REQUEST_METHOD'] != "POST" || (empty($_POST['key']) && empty($_POST['to_answer']) && empty($_POST['submit_answer']))) {
+if($_SERVER['REQUEST_METHOD'] != "POST" || (empty($_POST['go_back']) && empty($_POST['key']) && empty($_POST['to_answer']) && empty($_POST['submit_answer']))) {
   session_destroy();
   $_SESSION['selected'] = array();
   $_SESSION['current_phrase'] = '';
@@ -51,10 +52,24 @@ if(!empty($_POST['key'])) {
   $_SESSION['selected'] = $phrase_object->getSelected();
 }
 
+if(!empty($_POST['to_answer'])) {
+  $show_full_answer_screen = true;
+}
+elseif(!empty($_POST['go_back'])) {
+  $show_full_answer_screen = false;
+}
+
 if(!empty($_POST['submit_answer'])) {
   $words = filter_input(INPUT_POST,'words',FILTER_SANITIZE_STRING,FILTER_REQUIRE_ARRAY);
   $phrase_answer = implode(' ',$words);
-  $phrase_object->setPhraseAnswer($phrase_answer);
+  if(!empty(str_replace(' ','',$phrase_answer))) {
+    $phrase_object->setPhraseAnswer($phrase_answer);
+    $show_full_answer_screen = false;
+  }
+  else {
+    $show_full_answer_screen = true;
+    $message = 'You didn\'t fill in any words';
+  }
 }
 ?>
 
@@ -67,17 +82,19 @@ if(!empty($_POST['submit_answer'])) {
     <link href="css/styles.css" rel="stylesheet">
     <link href="css/animate.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- javascript to provide the user with the possibility to use the keys on his/her keyboard -->
-    <script type="text/javascript" src="src/js-file.js"></script>
+
 
 </head>
 
 <body>
 <div class="main-container">
-
     <div id="banner" class="section">
-
+        <?php
+        if(!empty($message)) {
+          echo '<h3 class="message">'.$message.'</h3>';
+        }
+        ?>
         <!-- <h2 class="header">Phrase Hunter</h2> -->
         <?php
         if($game_over_message = $game->gameOver())
@@ -87,12 +104,15 @@ if(!empty($_POST['submit_answer'])) {
         else {
 
           //if the user wants to fill in the full phrase, display the input text fields
-          if(!empty($_POST['to_answer'])) {
+          if($show_full_answer_screen) {
+            if(count($phrase_object->getSelected()) > 0) {
+              echo $phrase_object->addPhraseToDisplay($show_full_answer_screen);
+            }
             echo $phrase_object->displayInputFullPhrase();
           }
           else {
             echo $game->displayScore();
-            echo $phrase_object->addPhraseToDisplay();
+            echo $phrase_object->addPhraseToDisplay($show_full_answer_screen);
             echo $game->displayKeyboard();
           }
 
@@ -103,6 +123,9 @@ if(!empty($_POST['submit_answer'])) {
 
     </div>
 </div>
-
+<script type="text/javascript">
+  var mode = '<?php if ($show_full_answer_screen) {echo 'full_answer';} else {echo 'single_characters';} ?>';
+</script>
+<script type="text/javascript" src="src/js-file.js"></script>
 </body>
 </html>

@@ -48,12 +48,19 @@ class Phrase
     When the player correctly guesses a letter, the empty box is replaced with the matched letter. Use the class "hide" to hide a letter and "show" to show a letter.
     Make sure the phrase displayed on the screen doesn't include boxes for spaces: see example HTML.
   */
-  public function addPhraseToDisplay()
+  public function addPhraseToDisplay($show_full_answer_screen)
   {
     $display_phrase = '<div id="phrase" class="section">' . PHP_EOL;
-    $display_phrase .= '<form method="post" action="play.php">' . PHP_EOL;
-    $display_phrase .= '<input id="btn__answer" name="to_answer" type="submit" value="Fill in full phrase" />' . PHP_EOL;
-    $display_phrase .= '</form>' . PHP_EOL;
+
+    //if the user asked to fill in the full phrase, then this button doesn't have to be dispayed
+    if(!$show_full_answer_screen) {
+      $display_phrase .= '<form method="post" action="play.php">' . PHP_EOL;
+      $display_phrase .= '<input id="btn__answer" name="to_answer" type="submit" value="I know the answer" />' . PHP_EOL;
+      $display_phrase .= '</form>' . PHP_EOL;
+    }
+    else {
+      $display_phrase .= '<h3>You\'ve already guessed the following characters:</h3>' . PHP_EOL;
+    }
     $display_phrase .= '<ul>' . PHP_EOL;
 
     //thanks to https://stackoverflow.com/questions/4601032/php-iterate-on-string-characters
@@ -91,49 +98,20 @@ class Phrase
   {
     $display_full_phrase = '';
     $words = explode(' ',$this->getCurrentPhrase());
-
-    $display_full_phrase = '<div id="phrase" class="section">' . PHP_EOL;
+    $display_full_phrase .= '<h3 class="header">Fill in the full phrase:</h3>' . PHP_EOL;
     $display_full_phrase .= '<form method="post" action="play.php">' . PHP_EOL;
+    $display_full_phrase .= '<div class="section">' . PHP_EOL;
     foreach($words as $key=>$word) {
-      $display_full_phrase .= '<input id="btn__answer" size="'.strlen($word).'" maxlength="'.strlen($word).'" name="words[]" type="text" placeholder="Word ' . ($key+1) .'" />' . PHP_EOL;
+      $display_full_phrase .= '<input class="word" id="word'.($key+1).'" type="text" name="words[]" size="'.(strlen($word)).'" maxlength="'.strlen($word).'"';
+      if($key==0) {
+        $display_full_phrase .= ' autofocus';
+      }
+      $display_full_phrase .= ' onkeyup="focus_to_next('.($key+1).');" />' . PHP_EOL;
     }
+    $display_full_phrase .= '</div>' . PHP_EOL;
+    $display_full_phrase .= '<br><br><br><input id="btn__back" name="go_back" type="submit" value="Go back" />' . PHP_EOL;
     $display_full_phrase .= '<input id="btn__answer" name="submit_answer" type="submit" value="Am I right?" />' . PHP_EOL;
     $display_full_phrase .= '</form>' . PHP_EOL;
-    $display_full_phrase .= '</div>' . PHP_EOL;
-
-    // $display_full_phrase = '<div id="phrase" class="section">' . PHP_EOL;
-    // $display_full_phrase .= '<form method="post" action="play.php">' . PHP_EOL;
-    // $display_full_phrase .= '<input id="btn__answer" name="give_answer" type="submit" value="Fill in full phrase" />' . PHP_EOL;
-    // $display_full_phrase .= '</form>' . PHP_EOL;
-    // $display_full_phrase .= '<ul>' . PHP_EOL;
-    //
-    // //thanks to https://stackoverflow.com/questions/4601032/php-iterate-on-string-characters
-    // $characters = str_split($this->currentPhrase);
-    // //start position to look for a space to add a BR
-    // $next_new_line = 10;
-    // foreach ($characters as $key=>$character)
-    // {
-    //   $display_full_phrase .= '<li class="';
-    //
-    //   if($character == " ") {
-    //     $display_full_phrase .= 'hide space"> ';
-    //   } else {
-    //     if(in_array($character,$this->getSelected())) {
-    //       $display_full_phrase .= 'show ';
-    //     } else {
-    //       $display_full_phrase .= 'hide ';
-    //     }
-    //     $display_full_phrase .= 'letter '.$character.'">'.$character.'</li>' . PHP_EOL;
-    //   }
-    //   $display_full_phrase .= '</li>' . PHP_EOL;
-    //
-    //   if($character == " " && $key>= $next_new_line) {
-    //     $display_full_phrase .= '<br>' . PHP_EOL;
-    //     $next_new_line = $key + 10;
-    //   }
-    // }
-    // $display_full_phrase .= '</ul>' . PHP_EOL;
-    // $display_full_phrase .= '</div>' . PHP_EOL;
 
     return $display_full_phrase;
   }

@@ -28,6 +28,7 @@ body {
   flex-direction: column;
   display: flex;
   height: 100vh;
+  background-color: #96b0bc;
 }
 
 li, ol, ul {
@@ -46,9 +47,21 @@ h1 {
   font-size: 30px;
 }
 
+input[type=text] {
+  font-size: var(--font-size-medium);
+  color: white;
+  border: 0px;
+  background-color: var(--color-neutral);;
+  border-bottom: 1px white solid;
+  margin-right: 10px;
+  padding: 10px;
+
+
+}
+
 button, input[type=submit] {
   margin: 6px;
-  border: 1px solid transparent;
+  border: 1px solid white;
   padding: .5rem 1rem;
   color: var(--color-keys);
   font-size: var(--font-size-medium);
@@ -58,17 +71,22 @@ button, input[type=submit] {
   -o-transition: var(--transition);
   transition: var(--transition);
   cursor: pointer;
+  background-color: #3a3f58;
+  color: white;
+
 }
+button.incorrect,
 input[type=submit].incorrect {
   background-color: var(--color-lose);
 }
+button.correct,
 input[type=submit].correct {
   background-color: var(--color-win);
 }
 
 #btn__reset,
 #btn__answer {
-	width: 200px;
+	width: 250px;
 	margin: 0 auto;
 }
 
@@ -120,7 +138,7 @@ input[type=submit].correct {
 
 .show {
   color: #fff;
-  background-color: #4ac0d5;
+  background-color: var(--color-neutral);
   font-size: 20px;
   height: 65px;
   width: 65px;
@@ -202,6 +220,10 @@ input[type=submit].correct {
   color: #FFF;
 }
 
+.message {
+  color: var(--color-lose);
+}
+
 .start {
   background-color: #3a3f58;
 }
@@ -224,4 +246,11 @@ input[type=submit].correct {
 
 .lose a {
   color: var(--color-lose);
+}
+
+/* Score */
+/* thanks to https://codepen.io/taryaoui/pen/EKkcu */
+.hearts {
+  -webkit-filter: opacity(.5) drop-shadow(0 0 0 red);
+  filter: opacity(.5) drop-shadow(0 0 0 red);
 }
