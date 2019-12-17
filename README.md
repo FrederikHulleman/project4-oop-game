@@ -3,7 +3,6 @@
 
 - [Understand the rules of the game](#understand-the-rules-of-the-game)
 - [What the app does](#what-the-app-does)
-- [Installation instructions](#installation-instructions)
 - [Tech used](#tech-used)
 - [Folder & file structure](#folder--file-structure)
 
