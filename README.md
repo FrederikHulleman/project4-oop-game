@@ -50,7 +50,7 @@
 
 ## Tech used
 #### In this app the following main concepts & languages are applied:
-PHP | OOP | JavaScript | HTML | CSS
+PHP | OOP | JavaScript (event listener, show/hide/manipulate HTML, form handling, cookies, functions) | HTML | CSS
 
 ## Folder & file structure
 #### The most important folders & files within this project:
